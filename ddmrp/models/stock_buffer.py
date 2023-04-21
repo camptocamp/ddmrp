@@ -188,7 +188,7 @@ class StockBuffer(models.Model):
         action = self.env["ir.actions.actions"]._for_xml_id(
             "ddmrp.stock_move_year_consumption_action"
         )
-        locations = self.env["stock.location"].search(
+        locations = self.env["stock.location"].with_context(active_test=False).search(
             [("id", "child_of", [self.location_id.id])]
         )
         date_to = fields.Date.today()
@@ -1222,7 +1222,7 @@ class StockBuffer(models.Model):
         date_to = fields.Date.to_string(
             self.warehouse_id.wh_plan_days(datetime.now(), -1)
         )
-        locations = self.env["stock.location"].search(
+        locations = self.env["stock.location"].with_context(active_test=False).search(
             [("id", "child_of", [self.location_id.id])]
         )
         if self.adu_calculation_method.source_past == "estimates":
