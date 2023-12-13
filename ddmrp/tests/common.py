@@ -39,14 +39,23 @@ class TestDdmrpCommon(common.SavepointCase):
         cls.partner_model = cls.env["res.partner"]
         cls.supinfo_model = cls.env["product.supplierinfo"]
         cls.pol_model = cls.env["purchase.order.line"]
+        cls.wh_model = cls.env["stock.warehouse"]
 
         # Refs
         cls.main_company = cls.env.ref("base.main_company")
         cls.warehouse = cls.env.ref("stock.warehouse0")
+        cls.warehouse2 = cls.wh_model.create(
+            {
+                "partner_id": cls.env.ref("base.main_partner").id,
+                "name": "Warehouse 2",
+                "code": "WH2",
+            }
+        )
         cls.stock_location = cls.env.ref("stock.stock_location_stock")
         cls.location_shelf1 = cls.env.ref("stock.stock_location_components")
         cls.supplier_location = cls.env.ref("stock.stock_location_suppliers")
         cls.customer_location = cls.env.ref("stock.stock_location_customers")
+        cls.inter_wh = cls.env.ref("stock.stock_location_inter_wh")
         cls.inventory_location = cls.env["stock.location"].search(
             [("usage", "=", "inventory"), ("company_id", "=", cls.main_company.id)],
             limit=1,
@@ -70,13 +79,19 @@ class TestDdmrpCommon(common.SavepointCase):
         cls.group_change_procure_qty = cls.env.ref(
             "ddmrp.group_change_buffer_procure_qty"
         )
+        cls.group_buffer_manager = cls.env.ref("ddmrp.group_stock_buffer_maintainer")
         cls.calendar = cls.env.ref("resource.resource_calendar_std")
         cls.warehouse.calendar_id = cls.calendar
 
         # Create users
         cls.user = cls._create_user(
             "user_1",
-            [cls.group_stock_manager, cls.group_mrp_user, cls.group_change_procure_qty],
+            [
+                cls.group_stock_manager,
+                cls.group_mrp_user,
+                cls.group_change_procure_qty,
+                cls.group_buffer_manager,
+            ],
         )
         # Create Partners:
         vendor = cls.partner_model.create({"name": "Test Vendor 1"})
