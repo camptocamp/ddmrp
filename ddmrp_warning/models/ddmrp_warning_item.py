@@ -12,9 +12,7 @@ class DdmrpWarningItem(models.Model):
     warning_definition_id = fields.Many2one(
         comodel_name="ddmrp.warning.definition",
     )
-    buffer_id = fields.Many2one(
-        comodel_name="stock.buffer",
-    )
+    buffer_id = fields.Many2one(comodel_name="stock.buffer", ondelete="cascade")
     name = fields.Char(
         compute="_compute_name",
     )
@@ -22,6 +20,10 @@ class DdmrpWarningItem(models.Model):
         related="warning_definition_id.severity",
         store=True,
         readonly=True,
+    )
+    company_id = fields.Many2one(
+        related="buffer_id.company_id",
+        store=True,
     )
 
     def _compute_name(self):
