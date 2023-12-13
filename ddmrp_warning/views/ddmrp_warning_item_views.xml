@@ -14,6 +14,7 @@
             >
                 <field name="name" />
                 <field name="severity" />
+                <field name="company_id" groups="base.group_multi_company" />
             </tree>
         </field>
     </record>
@@ -27,6 +28,7 @@
                         <field name="warning_definition_id" />
                         <field name="buffer_id" />
                         <field name="severity" />
+                        <field name="company_id" groups="base.group_multi_company" />
                     </group>
                 </sheet>
             </form>
@@ -52,6 +54,12 @@
                         name="groupby_severity"
                         domain="[]"
                         context="{'group_by':'severity'}"
+                    />
+                    <filter
+                        string="Definition"
+                        name="groupby_warning_definition_id"
+                        domain="[]"
+                        context="{'group_by':'warning_definition_id'}"
                     />
                 </group>
             </search>
