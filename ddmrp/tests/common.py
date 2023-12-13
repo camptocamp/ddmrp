@@ -43,6 +43,7 @@ class TestDdmrpCommon(common.SavepointCase):
 
         # Refs
         cls.main_company = cls.env.ref("base.main_company")
+        cls.second_company = cls.env.ref("stock.res_company_1")
         cls.warehouse = cls.env.ref("stock.warehouse0")
         cls.warehouse2 = cls.wh_model.create(
             {
@@ -51,7 +52,9 @@ class TestDdmrpCommon(common.SavepointCase):
                 "code": "WH2",
             }
         )
+        cls.warehouse_sc = cls.env.ref("stock.stock_warehouse_shop0")
         cls.stock_location = cls.env.ref("stock.stock_location_stock")
+        cls.stock_location_sc = cls.warehouse_sc.lot_stock_id
         cls.location_shelf1 = cls.env.ref("stock.stock_location_components")
         cls.supplier_location = cls.env.ref("stock.stock_location_suppliers")
         cls.customer_location = cls.env.ref("stock.stock_location_customers")
@@ -61,6 +64,7 @@ class TestDdmrpCommon(common.SavepointCase):
             limit=1,
         )
         cls.uom_unit = cls.env.ref("uom.product_uom_unit")
+        cls.dozen_unit = cls.env.ref("uom.product_uom_dozen")
         cls.buffer_profile_pur = cls.env.ref(
             "ddmrp.stock_buffer_profile_replenish_purchased_medium_medium"
         )
@@ -304,7 +308,9 @@ class TestDdmrpCommon(common.SavepointCase):
         )
         return user
 
-    def create_pickingoutA(self, date_move, qty):
+    def create_pickingoutA(self, date_move, qty, uom=False):
+        if not uom:
+            uom = self.productA.uom_id
         picking = self.pickingModel.with_user(self.user).create(
             {
                 "picking_type_id": self.ref("stock.picking_type_out"),
@@ -319,7 +325,7 @@ class TestDdmrpCommon(common.SavepointCase):
                             "name": "Test move",
                             "product_id": self.productA.id,
                             "date": date_move,
-                            "product_uom": self.productA.uom_id.id,
+                            "product_uom": uom.id,
                             "product_uom_qty": qty,
                             "location_id": self.binA.id,
                             "location_dest_id": self.customer_location.id,
