@@ -1589,6 +1589,11 @@ class StockBuffer(models.Model):
                 or (
                     move.location_final_id
                     and not move.location_final_id.is_sublocation_of(self.location_id)
+                    and not move.move_dest_ids.filtered(
+                        lambda m: m.location_final_id == move.location_final_id
+                        and m.state
+                        in ("waiting", "confirmed", "partially_available", "assigned")
+                    )
                 )
             )
         )
@@ -1623,6 +1628,11 @@ class StockBuffer(models.Model):
                 or (
                     move.location_final_id
                     and move.location_final_id.is_sublocation_of(self.location_id)
+                    and not move.move_dest_ids.filtered(
+                        lambda m: m.location_final_id == move.location_final_id
+                        and m.state
+                        in ("waiting", "confirmed", "partially_available", "assigned")
+                    )
                 )
             )
         )
