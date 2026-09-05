@@ -53,9 +53,9 @@ class TestDdmrpNfpPartialRefreshOrdering(TestDdmrpCommon):
         picking_in = self.create_picking_in(self.product_purchased, date_move, qty)
 
         # Both moves are indeed seen by the buffer, one on each side.
-        out_buffers, _in_buffers = picking_out.move_ids._find_buffers_to_update_nfp()
+        out_buffers, _in_buffers = picking_out.move_ids._find_buffers_affected_by_moves()
         self.assertIn(buffer, out_buffers)
-        _out_buffers, in_buffers = picking_in.move_ids._find_buffers_to_update_nfp()
+        _out_buffers, in_buffers = picking_in.move_ids._find_buffers_affected_by_moves()
         self.assertIn(buffer, in_buffers)
 
         # The production order: demand side first, supply side second.
